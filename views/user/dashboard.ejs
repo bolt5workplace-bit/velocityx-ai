@@ -1717,18 +1717,18 @@ body {
       <div class="vx_active_engagements">
         <div class="vx_active_trade_card">
           <h4>Active Copy Trades</h4>
-          <p><strong><%= (activeCopies || []).length %></strong> active expert copy trades</p>
-          <p>Copies currently active will appear in your trading history.</p>
+          <p><strong><%= (activeCopies || []).length %></strong> open copy strategies</p>
+          <p><%= (activeCopies || []).length ? 'Your expert copy positions are shown below.' : 'No expert copy strategies are active right now.' %></p>
         </div>
         <div class="vx_active_trade_card">
           <h4>Active Bot Investments</h4>
           <p><strong><%= (activeInvestments || []).length %></strong> active bot investments</p>
-          <p>Active bot trades are shown here as they start.</p>
+          <p><%= (activeInvestments || []).length ? 'Your active bot trades are shown below.' : 'No automated bot investments are active at the moment.' %></p>
         </div>
       </div>
 
+      <% const activeCopyList = activeCopies || []; const activeInvestmentList = activeInvestments || []; %>
       <div class="vx_compact_cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.25rem;">
-        <% const activeCopyList = activeCopies || []; const activeInvestmentList = activeInvestments || []; %>
         <% if (activeCopyList.length) { %>
           <% activeCopyList.forEach(function(copy) { %>
             <div class="vx_active_trade_card" style="padding:1rem;display:flex;flex-direction:column;gap:0.5rem;">
@@ -1736,6 +1736,9 @@ body {
                 <div style="font-weight:700;color:#e2e8f0"><%= copy.expertName %></div>
                 <div style="font-size:0.85rem;color:#94a3b8">Copy</div>
               </div>
+              <% if (copy.expertTitle) { %>
+              <div style="color:#94a3b8;font-size:0.9rem"><%= copy.expertTitle %></div>
+              <% } %>
               <div style="display:flex;justify-content:space-between;align-items:center;">
                 <div style="color:#94a3b8;font-size:0.9rem">Started: <%= new Date(copy.createdAt).toLocaleDateString('en-US') %></div>
                 <div style="font-weight:700;color:#3b82f6">$<%= Number(copy.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
@@ -1760,18 +1763,17 @@ body {
             </div>
           <% }); %>
         <% } %>
-
-        <% if (!activeCopyList.length && !activeInvestmentList.length) { %>
-          <div class="vx_active_trade_card" style="padding:1.5rem;text-align:center;grid-column:1/-1;">
-            <div style="font-weight:700;color:#e2e8f0">No active trades yet</div>
-            <div style="color:#94a3b8">Start a copy trade or bot investment to see active positions here.</div>
-          </div>
-        <% } %>
       </div>
 
-      <div class="vx_active_trade_list">
-        <% /* keep the detailed list below for reference */ %>
-        <% if (activeCopyList.length || activeInvestmentList.length) { %>
+      <% if (!activeCopyList.length && !activeInvestmentList.length) { %>
+        <div class="vx_active_trade_card" style="padding:1.5rem;text-align:center;grid-column:1/-1;">
+          <div style="font-weight:700;color:#e2e8f0">No active trades yet</div>
+          <div style="color:#94a3b8">If your balance is sufficient, select an expert or bot to start a copy or bot trade.</div>
+        </div>
+      <% } %>
+
+      <% if (activeCopyList.length || activeInvestmentList.length) { %>
+        <div class="vx_active_trade_list">
           <% activeCopyList.forEach(function(copy) { %>
             <div class="vx_active_trade_list_row">
               <div class="vx_active_trade_list_item">
@@ -1798,8 +1800,8 @@ body {
               </div>
             </div>
           <% }); %>
-        <% } %>
-      </div>
+        </div>
+      <% } %>
 
       <div class="vx_stats_row">
         <div class="vx_stat_card">
