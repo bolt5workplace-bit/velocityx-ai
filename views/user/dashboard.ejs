@@ -332,24 +332,19 @@ body {
   height: 16px;
 }
 
-  .vx_balance_amount {
-  background: linear-gradient(135deg, #3477F2 0%, #2f6fd6 50%);
-  color: #ffffff;
-  font-size: 28px;
-  font-weight: 700;
-  padding: 18px 20px;
-  border-radius: 12px;
-  display: inline-block;
-  margin-top: 10px;
-}
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.vx_balance_actions {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.625rem;
-  position: relative;
-  overflow: hidden;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.vx_btn_deposit,
+.vx_btn_withdraw {
+  min-width: 140px;
+  padding: 0.95rem 1.3rem;
 }
 
 .vx_btn_deposit svg,
@@ -424,11 +419,71 @@ body {
 .vx_stats_row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1;
+  gap: 1rem;
   margin-bottom: 3rem;
 }
 
-.vx_stat_card {
+.vx_active_engagements {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.vx_active_trade_card {
+  background: linear-gradient(135deg, var(--card-bg) 0%, var(--secondary-bg) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  padding: 1.5rem;
+}
+
+.vx_active_trade_card h4 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #E2E8F0;
+}
+
+.vx_active_trade_card p {
+  margin: 0.35rem 0;
+  color: #94A3B8;
+}
+
+.vx_active_trade_list {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.vx_active_trade_list_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+}
+
+.vx_active_trade_list_item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.vx_active_trade_tag {
+  font-size: 0.8rem;
+  color: #60A5FA;
+  font-weight: 700;
+}
+
+.vx_active_trade_status {
+  font-size: 0.85rem;
+  color: #22C55E;
+  font-weight: 700;
+}
+
+.vx_section_verification {
   background: linear-gradient(135deg, var(--card-bg) 0%, var(--secondary-bg) 100%);
   border: 1px solid var(--border-color);
   border-radius: 20px;
@@ -1657,6 +1712,58 @@ body {
             Withdraw
           </button>
         </div>
+      </div>
+
+      <div class="vx_active_engagements">
+        <div class="vx_active_trade_card">
+          <h4>Active Copy Trades</h4>
+          <p><strong><%= (activeCopies || []).length %></strong> active expert copy trades</p>
+          <p>Copies currently active will appear in your trading history.</p>
+        </div>
+        <div class="vx_active_trade_card">
+          <h4>Active Bot Investments</h4>
+          <p><strong><%= (activeInvestments || []).length %></strong> active bot investments</p>
+          <p>Active bot trades are shown here as they start.</p>
+        </div>
+      </div>
+
+      <div class="vx_active_trade_list">
+        <% const activeCopyList = activeCopies || []; const activeInvestmentList = activeInvestments || []; %>
+        <% if (activeCopyList.length || activeInvestmentList.length) { %>
+          <% activeCopyList.forEach(function(copy) { %>
+            <div class="vx_active_trade_list_row">
+              <div class="vx_active_trade_list_item">
+                <span class="vx_active_trade_tag">Copy Trade</span>
+                <span><strong><%= copy.expertName %></strong></span>
+                <span>Started on <%= new Date(copy.createdAt).toLocaleDateString('en-US') %></span>
+              </div>
+              <div class="vx_active_trade_list_item" style="text-align:right;">
+                <span class="vx_active_trade_status"><%= copy.status.charAt(0).toUpperCase() + copy.status.slice(1) %></span>
+                <span>$<%= Number(copy.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></span>
+              </div>
+            </div>
+          <% }); %>
+          <% activeInvestmentList.forEach(function(inv) { %>
+            <div class="vx_active_trade_list_row">
+              <div class="vx_active_trade_list_item">
+                <span class="vx_active_trade_tag">Bot Trade</span>
+                <span><strong><%= inv.planName %></strong></span>
+                <span>Started on <%= new Date(inv.createdAt).toLocaleDateString('en-US') %></span>
+              </div>
+              <div class="vx_active_trade_list_item" style="text-align:right;">
+                <span class="vx_active_trade_status"><%= inv.status.charAt(0).toUpperCase() + inv.status.slice(1) %></span>
+                <span>$<%= Number(inv.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></span>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="vx_active_trade_list_row" style="justify-content:center;">
+            <div class="vx_active_trade_list_item">
+              <span class="vx_active_trade_tag">No active trades yet</span>
+              <span>Start a copy trade or bot investment to see your active positions here.</span>
+            </div>
+          </div>
+        <% } %>
       </div>
 
       <div class="vx_stats_row">
