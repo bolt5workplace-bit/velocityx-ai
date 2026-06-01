@@ -594,7 +594,7 @@
             <p>Your active investments and holdings. Track allocations, P&L, and performance over multiple timeframes.</p>
           </div>
 
-          <% const totalProfit = user.totalProfit || 0; const totalDeposit = user.totalDeposit || 0; const totalWithdrawal = user.totalWithdrawal || 0; const bonusValue = user.bonus || 0; const portfolioValue = (user.balance || 0) + totalProfit; const returnPct = totalDeposit > 0 ? ((totalProfit / totalDeposit) * 100).toFixed(1) : '0.0'; const cryptoAmount = portfolioValue ? Math.max(0, portfolioValue * 0.62) : 0; const realEstateAmount = portfolioValue ? Math.max(0, portfolioValue * 0.25) : 0; const cashAmount = Math.max(0, portfolioValue - cryptoAmount - realEstateAmount); const cryptoPct = portfolioValue ? ((cryptoAmount / portfolioValue) * 100).toFixed(1) : '0.0'; const realEstatePct = portfolioValue ? ((realEstateAmount / portfolioValue) * 100).toFixed(1) : '0.0'; const cashPct = portfolioValue ? ((cashAmount / portfolioValue) * 100).toFixed(1) : '0.0'; %>
+          <% const totalProfit = Number(user.totalProfit || 0); const totalDeposit = Number(user.totalDeposit || 0); const totalWithdrawal = Number(user.totalWithdrawal || 0); const bonusValue = Number(user.bonus || 0); const balanceAmount = Number(user.balance || 0); const portfolioValue = balanceAmount + totalProfit; const returnPct = totalDeposit > 0 ? ((totalProfit / totalDeposit) * 100).toFixed(1) : '0.0'; const cryptoAmount = portfolioValue ? Math.max(0, portfolioValue * 0.62) : 0; const realEstateAmount = portfolioValue ? Math.max(0, portfolioValue * 0.25) : 0; const cashAmount = Math.max(0, portfolioValue - cryptoAmount - realEstateAmount); const cryptoPct = portfolioValue ? ((cryptoAmount / portfolioValue) * 100).toFixed(1) : '0.0'; const realEstatePct = portfolioValue ? ((realEstateAmount / portfolioValue) * 100).toFixed(1) : '0.0'; const cashPct = portfolioValue ? ((cashAmount / portfolioValue) * 100).toFixed(1) : '0.0'; %>
 
           <div class="vx_portfolio_top_grid">
             <div class="vx_portfolio_value_card">
@@ -636,7 +636,7 @@
                 </div>
                 <div style="padding: 16px; background: rgba(59, 130, 246, 0.06); border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.15);">
                   <div class="vx_stat_label">Available Balance</div>
-                  <div style="font-size: 24px; font-weight: 700; color: #ffffff; margin-top: 6px;">$<%= (user.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
+                  <div style="font-size: 24px; font-weight: 700; color: #ffffff; margin-top: 6px;">$<%= balanceAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
                 </div>
               </div>
             </div>
