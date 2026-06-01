@@ -593,21 +593,21 @@
 
             <div class="vx_strategy_section">
               <h3 class="vx_section_title">
-                <span class="vx_section_icon">⚙️</span>
+                <i data-lucide="settings" class="vx_section_icon"></i>
                 Trading Strategy
               </h3>
 
               <div class="vx_strategy_grid">
                 <div class="vx_strategy_card">
                   <div class="vx_strategy_card_label">
-                    <span>🎯</span>
+                    <i data-lucide="target" style="width: 16px; height: 16px;"></i>
                     Strategy Type
                   </div>
                   <div class="vx_strategy_card_value"><%= bot.strategyType %></div>
                 </div>
                 <div class="vx_strategy_card">
                   <div class="vx_strategy_card_label">
-                    <span>🔄</span>
+                    <i data-lucide="repeat" style="width: 16px; height: 16px;"></i>
                     Trading Frequency
                   </div>
                   <div class="vx_strategy_card_value"><%= bot.tradingFrequency %></div>
@@ -616,7 +616,7 @@
 
               <div class="vx_description_box">
                 <div class="vx_description_title">
-                  <span>📝</span>
+                  <i data-lucide="file-text" style="width: 16px; height: 16px;"></i="file-text" style="width: 16px; height: 16px;"></i>
                   Description
                 </div>
                 <div class="vx_description_text"><%= bot.description %></div>
@@ -697,19 +697,50 @@
     </main>
   </div>
 
+  <div id="vx_toast" class="vx_toast"></div>
+
   <script>
+    function showToast(type, title, message, timeout = 3500) {
+      const toast = document.getElementById('vx_toast');
+      if (!toast) return;
+      toast.className = `vx_toast show ${type || 'info'}`;
+      toast.innerHTML = `<h4>${title}</h4><p>${message}</p>`;
+      if (timeout > 0) {
+        window.clearTimeout(window.vxToastTimeout);
+        window.vxToastTimeout = window.setTimeout(() => {
+          toast.className = 'vx_toast';
+        }, timeout);
+      }
+    }
+
     (function(){
       document.getElementById('vx_start_invest').addEventListener('click', function(){
         const amount = Number(document.getElementById('vx_invest_amount').value) || Number(document.getElementById('vx_invest_amount').getAttribute('min'));
-        if(!amount || amount < <%= bot.minInvestment %>) { alert('Please enter an amount of at least $' + <%= bot.minInvestment %>); return; }
+        if(!amount || amount < <%= bot.minInvestment %>) {
+          showToast('warn', 'Invalid Amount', 'Please enter an amount of at least $<%= bot.minInvestment %>.');
+          return;
+        }
+
         fetch('/user/join-plan', {
-          method:'POST', headers:{'Content-Type':'application/json'},
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ amount, planId: 'bot-<%= bot.id %>', planName: '<%= bot.name %>' })
-        }).then(r=>r.json()).then(function(data){
-          if(!data || !data.success){ if(data && data.redirect) return window.location.href = data.redirect; return alert(data && data.message ? data.message : 'Failed to start investment'); }
-          alert('Investment started. Trading has started.');
-          setTimeout(()=> window.location.reload(),800);
-        }).catch(function(e){ console.error(e); alert('Network error'); });
+        })
+          .then(async (r) => {
+            const data = await r.json().catch(() => null);
+            if (!data || !data.success) {
+              if (data && data.redirect) return window.location.href = data.redirect;
+              showToast('error', 'Unable to Invest', data && data.message ? data.message : 'Failed to start investment');
+              return;
+            }
+
+            showToast('success', 'Investment Started', 'Trading has started successfully.');
+            setTimeout(() => window.location.href = '/user/dashboard', 1200);
+          })
+          .catch(function(e) {
+            console.error(e);
+            showToast('error', 'Network Error', 'Unable to connect. Please try again.');
+          });
       });
     })();
   </script>
