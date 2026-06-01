@@ -6,6 +6,7 @@
   <title>Login - velocityx-ai Trading Platform</title>
   <link href="https://i.imgur.com/xnzyBi9.png" rel="shortcut icon"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="/js/formatters.js"></script>
 </head>
 <body>
 
@@ -522,7 +523,7 @@ body {
 
     <div id="vx_login_alert" class="vx_alert"></div>
 
-    <form id="vx_login_form" class="vx_login_form">
+    <form id="vx_login_form" class="vx_login_form" action="/login" method="POST">
       <div class="vx_form_group">
         <label for="vx_email" class="vx_form_label">Email Address or Username</label>
         <div class="vx_input_wrapper">
@@ -679,11 +680,15 @@ function vxHandleLogin(e) {
   }, 500);
 }
 
-const vxServerError = <%= JSON.stringify(typeof error !== 'undefined' ? error : '') %>;
-const vxServerMessage = <%= JSON.stringify(typeof message !== 'undefined' ? message : '') %>;
+const vxServerError = <%- JSON.stringify(typeof error !== 'undefined' ? error : '') %>;
+const vxServerMessage = <%- JSON.stringify(typeof message !== 'undefined' ? message : '') %>;
+const vxFormData = <%- JSON.stringify(typeof formData !== 'undefined' ? formData : {}) %>;
 
 document.addEventListener('DOMContentLoaded', () => {
   vxInitLogin();
+  if (vxFormData.identity) {
+    document.getElementById('vx_email').value = vxFormData.identity;
+  }
   if (vxServerError) {
     vxShowAlert(vxServerError, 'error');
   } else if (vxServerMessage) {
