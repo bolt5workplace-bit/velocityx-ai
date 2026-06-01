@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const { checkAuthenticated, checkNotAuthenticated } = require('../middleware/auth');
 const { getCollection } = require('../db');
+const { sendLoginEmail } = require('../mailer');
 
 const usersCollection = () => getCollection('users');
 const referralsCollection = () => getCollection('referrals');
@@ -248,7 +249,10 @@ router.post('/login', checkNotAuthenticated, async (req, res) => {
     
     // Set user session
     req.session.userId = user.id;
-    
+
+    sendLoginEmail(user.email, user.fullName)
+      .catch((emailErr) => console.error('Login email error:', emailErr));
+
     // Redirect to dashboard
     res.redirect('/user/dashboard');
   } catch (error) {
