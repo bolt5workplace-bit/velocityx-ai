@@ -874,50 +874,50 @@
               totalReturn: '+410,220%',
               equity: 512000,
               trades: 1874,
-              minInvestment: 1750,
+              minInvestment: 810,
               image: 'https://i.imgur.com/pIY06pX.jpeg'
             },
             {
-              id: 'marina-kovacs',
-              name: 'Marina Kovács',
-              title: 'Global Equities Strategist',
-              followers: 8742,
+              id: 'cristie-ford',
+              name: 'Cristie Ford',
+              title: 'Currency & Risk Specialist',
+              followers: 7420,
               rating: 5,
-              reviews: 162,
+              reviews: 128,
               winRate: 95,
-              totalReturn: '+398,500%',
-              equity: 438200,
-              trades: 1610,
-              minInvestment: 2500,
-              image: 'https://i.imgur.com/XY5k0Lc.jpeg'
+              totalReturn: '+198,500%',
+              equity: 218000,
+              trades: 940,
+              minInvestment: 550,
+              image: 'https://i.imgur.com/placeholder.png'
             },
             {
-              id: 'xavier-chen',
-              name: 'Xavier Chen',
-              title: 'Quantitative Stocks Analyst',
-              followers: 7320,
-              rating: 5,
-              reviews: 130,
-              winRate: 97,
-              totalReturn: '+275,340%',
-              equity: 385100,
-              trades: 1442,
-              minInvestment: 3200,
-              image: 'https://i.imgur.com/c4YzXWe.jpeg'
+              id: 'khalid-nainar',
+              name: 'Khalid Nainar',
+              title: 'Emerging Market Analyst',
+              followers: 5020,
+              rating: 4,
+              reviews: 86,
+              winRate: 92,
+              totalReturn: '+148,350%',
+              equity: 330000,
+              trades: 1122,
+              minInvestment: 430,
+              image: 'https://i.imgur.com/placeholder.png'
             },
             {
-              id: 'selena-gray',
-              name: 'Selena Gray',
-              title: 'Income & Growth Portfolio Manager',
-              followers: 6195,
+              id: 'kevin-hallock',
+              name: 'Kevin Hallock',
+              title: 'Institutional Capital Strategist',
+              followers: 15500,
               rating: 5,
-              reviews: 118,
-              winRate: 94,
-              totalReturn: '+274,910%',
-              equity: 442500,
-              trades: 1356,
-              minInvestment: 2800,
-              image: 'https://i.imgur.com/dyVDjHX.jpeg'
+              reviews: 215,
+              winRate: 98,
+              totalReturn: '+1,120,400%',
+              equity: 1820000,
+              trades: 4870,
+              minInvestment: 75000,
+              image: 'https://i.imgur.com/placeholder.png'
             }
           ]; %>
 
@@ -1070,7 +1070,9 @@
           const input = card.querySelector('.vx_join_input');
           const amount = Number(input.value) || Number(input.getAttribute('min'));
 
-          pending = { expertId, name, amount };
+          const title = card.querySelector('.vx_expert_title').textContent.trim();
+          const image = card.querySelector('.vx_expert_image').src;
+          pending = { expertId, name, amount, title, image };
           confirmTitle.textContent = 'Copy ' + name;
           confirmBody.innerHTML = 'Start copying <strong>' + name + '</strong> with <strong>$' + amount.toLocaleString() + '</strong>?';
           confirmModal.classList.add('show');
@@ -1094,7 +1096,9 @@
           body: JSON.stringify({
             amount: pending.amount,
             expertId: pending.expertId,
-            expertName: pending.name
+            expertName: pending.name,
+            expertTitle: pending.title,
+            expertImage: pending.image
           })
         })
           .then(async (res) => {
@@ -1134,7 +1138,3 @@
 
     })();
   </script>
-
-  <script src="/js/dashboard.js"></script>
-</body>
-</html>
