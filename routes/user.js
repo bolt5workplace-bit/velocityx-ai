@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { getCollection } = require('../db');
+const { sendCopyTradeEmail, sendInvestmentEmail } = require('../mailer');
 
 // Helper functions to read/write JSON files
 const withdrawalsPath = path.join(__dirname, '../data/withdrawals.json');
@@ -94,13 +95,20 @@ const updateUserBalance = async (userId, newBalance) => {
 // Dashboard route
 router.get('/dashboard', (req, res) => {
   const user = req.currentUser;
-  
   if (!user) {
     req.session.destroy();
     return res.redirect('/login');
   }
-  
-  res.render('user/dashboard', { user, page: 'dashboard' });
+
+  const activeCopies = getCopies().filter(copy => copy.userId === user.id && copy.status === 'active');
+  const activeInvestments = getInvestments().filter(inv => inv.userId === user.id && inv.status === 'active');
+
+  res.render('user/dashboard', {
+    user,
+    page: 'dashboard',
+    activeCopies,
+    activeInvestments
+  });
 });
 
 // Trade route
@@ -312,7 +320,14 @@ router.get('/account-statement', (req, res) => requireUser(req, res, 'user/accou
 router.get('/real-estate-plans', (req, res) => requireUser(req, res, 'user/real-estate-plans', 'real-estate-plans'));
 router.get('/my-portfolio', (req, res) => requireUser(req, res, 'user/my-portfolio', 'my-portfolio'));
 router.get('/performance-history', (req, res) => requireUser(req, res, 'user/performance-history', 'performance-history'));
-router.get('/copy-trading', (req, res) => requireUser(req, res, 'user/copy-trading', 'copy-trading'));
+router.get('/copy-trading', (req, res) => {
+  const user = req.currentUser;
+  if (!user) {
+    req.session.destroy();
+    return res.redirect('/login');
+  }
+  res.render('user/experts', { user, page: 'copy-trading' });
+});
 router.get('/ai-trading-bots', (req, res) => requireUser(req, res, 'user/ai-trading-bots', 'ai-trading-bots'));
 router.get('/internal-transfer', (req, res) => requireUser(req, res, 'user/internal-transfer', 'internal-transfer'));
 router.get('/apply-credit', (req, res) => requireUser(req, res, 'user/apply-credit', 'apply-credit'));
@@ -470,6 +485,9 @@ router.post('/join-copy', async (req, res) => {
     copies.push(copyRecord);
     saveCopies(copies);
 
+    sendCopyTradeEmail(user.email, user.fullName, expertName, amount)
+      .catch((emailErr) => console.error('Copy trade email error:', emailErr));
+
     return res.json({ success: true, message: 'Copying started', newBalance: updated.balance });
   } catch (err) {
     console.error('Join copy error:', err);
@@ -526,6 +544,9 @@ router.post('/join-plan', async (req, res) => {
   };
   investments.push(investmentRecord);
   saveInvestments(investments);
+
+  sendInvestmentEmail(user.email, user.fullName, planName, amount)
+    .catch((emailErr) => console.error('Investment email error:', emailErr));
 
   return res.json({ success: true, message: 'Investment started', newBalance: updated.balance });
 });
