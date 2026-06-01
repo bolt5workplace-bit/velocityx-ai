@@ -679,8 +679,8 @@
 
             <div class="vx_hero_actions">
               <div class="vx_experts_count">
-                <i data-lucide="check-circle" style="width: 16px; height: 16px; color: #10b981;"></i>
-                <span><span class="vx_experts_count_number">12</span> Verified Experts</span>
+                <i data-lucide="check-circle" style="width: 16px; height: 16px; color: #3477F2;"></i>
+                <span><span class="vx_experts_count_number">16</span> Verified Experts</span>
               </div>
               <button class="vx_how_btn" id="openHow">
                 <i data-lucide="help-circle" style="width: 18px; height: 18px;"></i>
@@ -824,7 +824,7 @@
             {
               id: 'alex-thompson',
               name: 'Alex Thompson',
-              title: 'Forex Expert, Analyst',
+              title: 'Stocks Specialist, Analyst',
               followers: 5420,
               rating: 4,
               reviews: 89,
@@ -862,6 +862,62 @@
               trades: 1034,
               minInvestment: 1034,
               image: 'https://i.imgur.com/O6txVIv.jpeg'
+            },
+            {
+              id: 'aris-protopapadakis',
+              name: 'Aris Protopapadakis',
+              title: 'Equities Specialist, Trade Architect',
+              followers: 9980,
+              rating: 5,
+              reviews: 140,
+              winRate: 96,
+              totalReturn: '+410,220%',
+              equity: 512000,
+              trades: 1874,
+              minInvestment: 1750,
+              image: 'https://i.imgur.com/pIY06pX.jpeg'
+            },
+            {
+              id: 'marina-kovacs',
+              name: 'Marina Kovács',
+              title: 'Global Equities Strategist',
+              followers: 8742,
+              rating: 5,
+              reviews: 162,
+              winRate: 95,
+              totalReturn: '+398,500%',
+              equity: 438200,
+              trades: 1610,
+              minInvestment: 2500,
+              image: 'https://i.imgur.com/XY5k0Lc.jpeg'
+            },
+            {
+              id: 'xavier-chen',
+              name: 'Xavier Chen',
+              title: 'Quantitative Stocks Analyst',
+              followers: 7320,
+              rating: 5,
+              reviews: 130,
+              winRate: 97,
+              totalReturn: '+275,340%',
+              equity: 385100,
+              trades: 1442,
+              minInvestment: 3200,
+              image: 'https://i.imgur.com/c4YzXWe.jpeg'
+            },
+            {
+              id: 'selena-gray',
+              name: 'Selena Gray',
+              title: 'Income & Growth Portfolio Manager',
+              followers: 6195,
+              rating: 5,
+              reviews: 118,
+              winRate: 94,
+              totalReturn: '+274,910%',
+              equity: 442500,
+              trades: 1356,
+              minInvestment: 2800,
+              image: 'https://i.imgur.com/dyVDjHX.jpeg'
             }
           ]; %>
 
@@ -1041,8 +1097,8 @@
             expertName: pending.name
           })
         })
-          .then(r => r.json())
-          .then(function(data) {
+          .then(async (res) => {
+            const data = await res.json().catch(() => null);
             confirmProceed.disabled = false;
             confirmProceed.textContent = 'Start Copying';
             confirmModal.classList.remove('show');
