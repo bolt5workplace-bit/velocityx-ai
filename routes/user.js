@@ -92,6 +92,35 @@ const updateUserBalance = async (userId, newBalance) => {
   return result.value;
 };
 
+const safeDeductUserBalance = async (userId, amount) => {
+  const users = await getUsersCollection();
+  const userDoc = await users.findOne({ id: userId });
+  if (!userDoc) return null;
+
+  const currentBalance = Number(userDoc.balance) || 0;
+  if (amount > currentBalance) return null;
+
+  const newBalance = Number((currentBalance - amount).toFixed(2));
+  const updateResult = await users.findOneAndUpdate(
+    { id: userId, balance: { $gte: amount } },
+    { $set: { balance: newBalance } },
+    { returnDocument: 'after' }
+  );
+
+  if (updateResult.value) return updateResult.value;
+
+  if (currentBalance >= amount) {
+    const fallbackResult = await users.findOneAndUpdate(
+      { id: userId },
+      { $set: { balance: newBalance } },
+      { returnDocument: 'after' }
+    );
+    return fallbackResult.value;
+  }
+
+  return null;
+};
+
 // Dashboard route
 router.get('/dashboard', (req, res) => {
   const user = req.currentUser;
@@ -473,14 +502,7 @@ router.post('/join-copy', async (req, res) => {
 
   const newBalance = Number((currentBalance - amount).toFixed(2));
   try {
-    const users = await getUsersCollection();
-    const result = await users.findOneAndUpdate(
-      { id: user.id, balance: { $gte: amount } },
-      { $set: { balance: newBalance } },
-      { returnDocument: 'after' }
-    );
-    const updated = result.value;
-
+    const updated = await safeDeductUserBalance(user.id, amount);
     if (!updated) {
       return res.status(500).json({ success: false, message: 'Failed to update balance. Please refresh and try again.' });
     }
@@ -505,7 +527,7 @@ router.post('/join-copy', async (req, res) => {
     sendCopyTradeEmail(user.email, user.fullName, expertName, amount)
       .catch((emailErr) => console.error('Copy trade email error:', emailErr));
 
-    return res.json({ success: true, message: 'Copying started', newBalance: updated.balance });
+    return res.json({ success: true, message: 'Trading has started', newBalance: updated.balance, redirect: '/user/dashboard' });
   } catch (err) {
     console.error('Join copy error:', err);
     try {
@@ -546,14 +568,7 @@ router.post('/join-plan', async (req, res) => {
 
   const newBalance = Number((currentBalance - amount).toFixed(2));
   try {
-    const users = await getUsersCollection();
-    const result = await users.findOneAndUpdate(
-      { id: user.id, balance: { $gte: amount } },
-      { $set: { balance: newBalance } },
-      { returnDocument: 'after' }
-    );
-    const updated = result.value;
-
+    const updated = await safeDeductUserBalance(user.id, amount);
     if (!updated) {
       return res.status(500).json({ success: false, message: 'Failed to update balance. Please refresh and try again.' });
     }
@@ -576,7 +591,7 @@ router.post('/join-plan', async (req, res) => {
     sendInvestmentEmail(user.email, user.fullName, planName, amount)
       .catch((emailErr) => console.error('Investment email error:', emailErr));
 
-    return res.json({ success: true, message: 'Investment started', newBalance: updated.balance });
+    return res.json({ success: true, message: 'Trading has started', newBalance: updated.balance, redirect: '/user/dashboard' });
   } catch (err) {
     console.error('Join plan error:', err);
     try {
@@ -630,18 +645,3 @@ router.post('/profile/update', async (req, res) => {
 // Apply for credit (AJAX) - not auto-approved; admin will review
 router.post('/apply-credit', (req, res) => {
   const user = req.currentUser;
-  if (!user) return res.status(401).json({ success: false, message: 'Unauthorized', redirect: '/login' });
-
-  const amount = parseFloat(req.body.amount);
-  const reason = req.body.reason || '';
-  if (isNaN(amount) || amount <= 0) return res.json({ success: false, message: 'Invalid amount' });
-
-  const credits = getCredits();
-  const reqRecord = { id: uuidv4(), userId: user.id, userName: user.fullName, amount: parseFloat(amount.toFixed(2)), reason, status: 'pending', createdAt: new Date().toISOString() };
-  credits.push(reqRecord);
-  saveCredits(credits);
-
-  return res.json({ success: true, message: 'Credit request submitted' });
-});
-
-module.exports = router;
