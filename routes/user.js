@@ -604,3 +604,7 @@ router.post('/apply-credit', (req, res) => {
   credits.push(reqRecord);
   saveCredits(credits);
 
+  return res.json({ success: true, message: 'Credit request submitted' });
+});
+
+module.exports = router;
