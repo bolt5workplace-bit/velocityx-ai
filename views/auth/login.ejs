@@ -679,7 +679,17 @@ function vxHandleLogin(e) {
   }, 500);
 }
 
-document.addEventListener('DOMContentLoaded', vxInitLogin);
+const vxServerError = <%= JSON.stringify(typeof error !== 'undefined' ? error : '') %>;
+const vxServerMessage = <%= JSON.stringify(typeof message !== 'undefined' ? message : '') %>;
+
+document.addEventListener('DOMContentLoaded', () => {
+  vxInitLogin();
+  if (vxServerError) {
+    vxShowAlert(vxServerError, 'error');
+  } else if (vxServerMessage) {
+    vxShowAlert(vxServerMessage, 'success');
+  }
+});
 </script>
 
 </body>
