@@ -6,7 +6,7 @@ const mailHost = process.env.MAIL_HOST || process.env.SMTP_HOST || (mailService 
 const mailPort = Number(process.env.MAIL_PORT || process.env.SMTP_PORT || 465);
 const mailUser = process.env.MAIL_USER || process.env.SMTP_USER;
 const mailPass = process.env.MAIL_PASS || process.env.SMTP_PASS;
-const mailFrom = process.env.MAIL_FROM || 'no-reply@veloxicity.com';
+const mailFrom = (process.env.MAIL_FROM || 'no-reply@veloxicity.com').trim().replace(/^"(.+)"$/, '$1');
 
 const transporterOptions = mailService
   ? {
