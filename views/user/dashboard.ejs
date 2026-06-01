@@ -1634,7 +1634,7 @@ body {
         </div>
         <div class="vx_balance_title">Account Balance</div>
         <div class="vx_balance_subtitle">Your available funds</div>
-        <div class="vx_balance_amount">$<%= (user.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
+        <div class="vx_balance_amount">$<%= Number(user.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
         <div class="vx_balance_status success">
           <i data-lucide="check-circle"></i>
           Available for Withdrawal
@@ -1667,7 +1667,7 @@ body {
             </div>
             <span class="vx_stat_label">Total Profit</span>
           </div>
-          <div class="vx_stat_value">$<%= (user.totalProfit || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
+          <div class="vx_stat_value">$<%= Number(user.totalProfit || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
           <div class="vx_stat_subtitle">
             <i data-lucide="calendar"></i>
             Last period
@@ -1680,7 +1680,7 @@ body {
             </div>
             <span class="vx_stat_label">Total Deposit</span>
           </div>
-          <div class="vx_stat_value">$<%= (user.totalDeposit || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
+          <div class="vx_stat_value">$<%= Number(user.totalDeposit || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
           <div class="vx_stat_subtitle">
             <i data-lucide="infinity"></i>
             All time
@@ -1693,7 +1693,7 @@ body {
             </div>
             <span class="vx_stat_label">Total Withdrawal</span>
           </div>
-          <div class="vx_stat_value">$<%= (user.totalWithdrawal || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
+          <div class="vx_stat_value">$<%= Number(user.totalWithdrawal || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
           <div class="vx_stat_subtitle">
             <i data-lucide="infinity"></i>
             All time
@@ -1706,7 +1706,7 @@ body {
             </div>
             <span class="vx_stat_label">Bonus</span>
           </div>
-          <div class="vx_stat_value">$<%= (user.bonus || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
+          <div class="vx_stat_value">$<%= Number(user.bonus || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
           <div class="vx_stat_subtitle">
             <i data-lucide="infinity"></i>
             All time
