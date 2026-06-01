@@ -274,7 +274,7 @@ body {
 
 .vx_input_field {
   width: 100%;
-  padding: 14px 16px 14px 44px;
+  padding: 14px 50px 14px 44px;
   background: rgba(22, 35, 56, 0.6);
   border: 1px solid rgba(131, 216, 255, 0.2);
   border-radius: 10px;
@@ -297,6 +297,33 @@ body {
 .vx_input_field:focus + .vx_input_icon,
 .vx_input_wrapper:focus-within .vx_input_icon {
   color: #4287f5;
+}
+
+.vx_password_toggle {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #5a6a85;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.vx_password_toggle:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.vx_password_toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 135, 245, 0.2);
 }
 
 .vx_error_msg {
@@ -1047,6 +1074,9 @@ body {
           <div class="vx_input_wrapper">
             <i class="vx_input_icon fas fa-lock"></i>
             <input type="password" id="vx_password" class="vx_input_field" placeholder="enter password">
+            <button type="button" class="vx_password_toggle" id="vx_password_toggle" aria-label="Toggle password visibility">
+              <i class="fas fa-eye"></i>
+            </button>
           </div>
           <div class="vx_error_msg" id="vx_password_error"></div>
         </div>
@@ -1318,6 +1348,13 @@ function vxAttachEventListeners() {
   document.getElementById('vx_continue_2').addEventListener('click', () => vxGoToStep(3));
 
   document.getElementById('vx_password').addEventListener('input', vxValidateStep3);
+  const passwordToggle = document.getElementById('vx_password_toggle');
+  if (passwordToggle) {
+    passwordToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      vxTogglePassword();
+    });
+  }
   document.getElementById('vx_confirm').addEventListener('input', vxValidateStep3);
   document.getElementById('vx_captcha_input').addEventListener('input', vxValidateStep3);
   document.getElementById('vx_agree_tos').addEventListener('change', vxValidateStep3);
@@ -1459,6 +1496,23 @@ function vxValidateStep3() {
   }
 
   return isValid;
+}
+
+function vxTogglePassword() {
+  const passwordInput = document.getElementById('vx_password');
+  const toggle = document.getElementById('vx_password_toggle');
+  if (!passwordInput || !toggle) return;
+
+  const icon = toggle.querySelector('i');
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    icon.classList.remove('fa-eye');
+    icon.classList.add('fa-eye-slash');
+  } else {
+    passwordInput.type = 'password';
+    icon.classList.remove('fa-eye-slash');
+    icon.classList.add('fa-eye');
+  }
 }
 
 function vxShowError(fieldId, message) {
