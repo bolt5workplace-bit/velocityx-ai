@@ -1765,13 +1765,6 @@ body {
         <% } %>
       </div>
 
-      <% if (!activeCopyList.length && !activeInvestmentList.length) { %>
-        <div class="vx_active_trade_card" style="padding:1.5rem;text-align:center;grid-column:1/-1;">
-          <div style="font-weight:700;color:#e2e8f0">No active trades yet</div>
-          <div style="color:#94a3b8">If your balance is sufficient, select an expert or bot to start a copy or bot trade.</div>
-        </div>
-      <% } %>
-
       <% if (activeCopyList.length || activeInvestmentList.length) { %>
         <div class="vx_active_trade_list">
           <% activeCopyList.forEach(function(copy) { %>
