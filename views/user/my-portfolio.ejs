@@ -171,6 +171,16 @@
       margin: 0;
     }
 
+    .vx_holdings_empty {
+      padding: 24px;
+      border-radius: 14px;
+      background: rgba(30, 41, 59, 0.75);
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.7;
+      border: 1px solid rgba(59, 130, 246, 0.12);
+    }
+
     .vx_holdings_count {
       background: rgba(59, 130, 246, 0.15);
       color: #3b82f6;
@@ -584,26 +594,28 @@
             <p>Your active investments and holdings. Track allocations, P&L, and performance over multiple timeframes.</p>
           </div>
 
+          <% const totalProfit = user.totalProfit || 0; const totalDeposit = user.totalDeposit || 0; const totalWithdrawal = user.totalWithdrawal || 0; const bonusValue = user.bonus || 0; const portfolioValue = (user.balance || 0) + totalProfit; const returnPct = totalDeposit > 0 ? ((totalProfit / totalDeposit) * 100).toFixed(1) : '0.0'; const cryptoAmount = portfolioValue ? Math.max(0, portfolioValue * 0.62) : 0; const realEstateAmount = portfolioValue ? Math.max(0, portfolioValue * 0.25) : 0; const cashAmount = Math.max(0, portfolioValue - cryptoAmount - realEstateAmount); const cryptoPct = portfolioValue ? ((cryptoAmount / portfolioValue) * 100).toFixed(1) : '0.0'; const realEstatePct = portfolioValue ? ((realEstateAmount / portfolioValue) * 100).toFixed(1) : '0.0'; const cashPct = portfolioValue ? ((cashAmount / portfolioValue) * 100).toFixed(1) : '0.0'; %>
+
           <div class="vx_portfolio_top_grid">
             <div class="vx_portfolio_value_card">
               <div class="vx_portfolio_value_label">Portfolio Value</div>
               <div class="vx_portfolio_value_display">
-                <div class="vx_portfolio_main_value">$19,037.50</div>
-                <div class="vx_portfolio_change vx_change_positive">
+                <div class="vx_portfolio_main_value">$<%= portfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
+                <div class="vx_portfolio_change <%= totalProfit >= 0 ? 'vx_change_positive' : 'vx_change_negative' %>">
                   <svg class="vx_change_icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                   </svg>
-                  +2.9% (24h)
+                  <%= totalProfit >= 0 ? '+' : '-' %><%= Math.abs(returnPct) %>%
                 </div>
               </div>
               <div class="vx_portfolio_stats">
                 <div class="vx_stat_item">
                   <span class="vx_stat_label">All Time Gain</span>
-                  <span class="vx_stat_value" style="color: #10b981;">+$4,287.50</span>
+                  <span class="vx_stat_value" style="color: #3477F2;"><%= totalProfit >= 0 ? '+' : '-' %>$<%= Math.abs(totalProfit).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></span>
                 </div>
                 <div class="vx_stat_item">
                   <span class="vx_stat_label">Return %</span>
-                  <span class="vx_stat_value" style="color: #10b981;">+29.1%</span>
+                  <span class="vx_stat_value" style="color: #3477F2;"><%= totalDeposit > 0 ? returnPct + '%' : 'N/A' %></span>
                 </div>
               </div>
             </div>
@@ -611,20 +623,20 @@
             <div class="vx_holdings_card">
               <div class="vx_holdings_header">
                 <h3 class="vx_holdings_title">Quick Stats</h3>
-                <span class="vx_holdings_count">3 Assets</span>
+                <span class="vx_holdings_count">Summary</span>
               </div>
               <div style="display: grid; gap: 16px;">
                 <div style="padding: 16px; background: rgba(59, 130, 246, 0.06); border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.15);">
                   <div class="vx_stat_label">Total Invested</div>
-                  <div style="font-size: 24px; font-weight: 700; color: #ffffff; margin-top: 6px;">$14,750.00</div>
+                  <div style="font-size: 24px; font-weight: 700; color: #ffffff; margin-top: 6px;">$<%= totalDeposit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
                 </div>
-                <div style="padding: 16px; background: rgba(16, 185, 129, 0.06); border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.15);">
+                <div style="padding: 16px; background: rgba(59, 130, 246, 0.06); border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.15);">
                   <div class="vx_stat_label">Unrealized Gain</div>
-                  <div style="font-size: 24px; font-weight: 700; color: #10b981; margin-top: 6px;">+$4,287.50</div>
+                  <div style="font-size: 24px; font-weight: 700; color: #3477F2; margin-top: 6px;">$<%= totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
                 </div>
-                <div style="padding: 16px; background: rgba(99, 179, 237, 0.06); border-radius: 10px; border: 1px solid rgba(99, 179, 237, 0.15);">
-                  <div class="vx_stat_label">Liquidity</div>
-                  <div style="font-size: 24px; font-weight: 700; color: #60d5ff; margin-top: 6px;">$9,037.50</div>
+                <div style="padding: 16px; background: rgba(59, 130, 246, 0.06); border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.15);">
+                  <div class="vx_stat_label">Available Balance</div>
+                  <div style="font-size: 24px; font-weight: 700; color: #ffffff; margin-top: 6px;">$<%= (user.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
                 </div>
               </div>
             </div>
@@ -649,102 +661,29 @@
           <div class="vx_allocation_grid">
             <div class="vx_allocation_card">
               <div class="vx_allocation_label">Crypto Assets</div>
-              <div class="vx_allocation_percentage">63.4%</div>
-              <div class="vx_allocation_amount">$12,037.50</div>
+              <div class="vx_allocation_percentage"><%= cryptoPct %>%</div>
+              <div class="vx_allocation_amount">$<%= cryptoAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
             </div>
             <div class="vx_allocation_card">
               <div class="vx_allocation_label">Real Estate</div>
-              <div class="vx_allocation_percentage">26.2%</div>
-              <div class="vx_allocation_amount">$5,000.00</div>
+              <div class="vx_allocation_percentage"><%= realEstatePct %>%</div>
+              <div class="vx_allocation_amount">$<%= realEstateAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
             </div>
             <div class="vx_allocation_card">
               <div class="vx_allocation_label">Cash</div>
-              <div class="vx_allocation_percentage">10.4%</div>
-              <div class="vx_allocation_amount">$2,000.00</div>
+              <div class="vx_allocation_percentage"><%= cashPct %>%</div>
+              <div class="vx_allocation_amount">$<%= cashAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
             </div>
           </div>
 
           <div class="vx_holdings_card">
             <div class="vx_holdings_header">
               <h3 class="vx_holdings_title">Holdings</h3>
-              <span class="vx_holdings_count">3 Assets</span>
+              <span class="vx_holdings_count"><%= totalDeposit > 0 ? 'Tracked assets' : 'No holdings available' %></span>
             </div>
-            <ul class="vx_holdings_list">
-              <li class="vx_holding_item">
-                <div class="vx_holding_left">
-                  <div class="vx_holding_icon">₿</div>
-                  <div class="vx_holding_info">
-                    <h4>Bitcoin (BTC)</h4>
-                    <p>0.25 BTC</p>
-                  </div>
-                </div>
-                <div class="vx_holding_right">
-                  <div class="vx_holding_value">
-                    <span class="vx_holding_amount">$10,812.50</span>
-                    <span class="vx_holding_percentage">56.8%</span>
-                  </div>
-                  <div class="vx_holding_change">
-                    <span class="vx_holding_change_pct vx_change_positive_text">
-                      <svg class="vx_change_icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m0 0l4 4m6-4v12m0 0l4-4m0 0l-4-4"></path>
-                      </svg>
-                      +3.2%
-                    </span>
-                    <span class="vx_holding_usd">+$335.39</span>
-                  </div>
-                </div>
-              </li>
-
-              <li class="vx_holding_item">
-                <div class="vx_holding_left">
-                  <div class="vx_holding_icon" style="color: #a78bfa; background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%); border-color: rgba(167, 139, 250, 0.3);">Ξ</div>
-                  <div class="vx_holding_info">
-                    <h4>Ethereum (ETH)</h4>
-                    <p>1.5 ETH</p>
-                  </div>
-                </div>
-                <div class="vx_holding_right">
-                  <div class="vx_holding_value">
-                    <span class="vx_holding_amount">$3,225.00</span>
-                    <span class="vx_holding_percentage">16.9%</span>
-                  </div>
-                  <div class="vx_holding_change">
-                    <span class="vx_holding_change_pct vx_change_negative_text">
-                      <svg class="vx_change_icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m0 0l4 4m6-4v12m0 0l4-4m0 0l-4-4"></path>
-                      </svg>
-                      -1.1%
-                    </span>
-                    <span class="vx_holding_usd">-$35.48</span>
-                  </div>
-                </div>
-              </li>
-
-              <li class="vx_holding_item">
-                <div class="vx_holding_left">
-                  <div class="vx_holding_icon" style="color: #34d399; background: linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%); border-color: rgba(52, 211, 153, 0.3);">🏢</div>
-                  <div class="vx_holding_info">
-                    <h4>RE Fund</h4>
-                    <p>1 Unit</p>
-                  </div>
-                </div>
-                <div class="vx_holding_right">
-                  <div class="vx_holding_value">
-                    <span class="vx_holding_amount">$5,000.00</span>
-                    <span class="vx_holding_percentage">26.2%</span>
-                  </div>
-                  <div class="vx_holding_change">
-                    <span class="vx_holding_change_pct vx_change_positive_text">
-                      <svg class="vx_change_icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m0 0l4 4m6-4v12m0 0l4-4m0 0l-4-4"></path>
-                      </svg>
-                      +0.8%
-                    </span>
-                    <span class="vx_holding_usd">+$40.00</span>
-                  </div>
-                </div>
-              </li>
-            </ul>
+            <div class="vx_holdings_empty">
+              <p>Your current portfolio holdings will appear here after you make an investment or begin copy trading.</p>
+            </div>
           </div>
 
           <div class="vx_actions_section">
